@@ -22,37 +22,43 @@ function check(str)
 	return 2;
 }
 
-function eval(str, c, trg)
+function ab_cut(str, c, a, b)
 {
 	if (str in H) return H[str];
 	
 	var h = check(str);
 	if (h != 2) return H[str] = h;
 	
-	var opt = 6 - 4*c;
+	var v = 6 - 4*c; // достатъчно малка(голяма) стойност
+	
 	var cnext;
+	
+	var aa = a;
+	var bb = b;
 	
 	for (var i = 0; i < 9; i++) if (str[i] == '0')
 	{
 		var next = str.substr(0, i) + c + str.substr(i + 1, 8 - i);
 		
-		var tau = eval(next, 3 - c, 2*trg - 3);
+		var tau = ab_cut(next, 3 - c, aa, bb);
 		
-		if (tau == trg) // С‚СѓРє Рµ РѕС‚СЃРёС‡Р°РЅРµС‚Рѕ
+		if (c == 1 && tau < v || c == 2 && tau > v)
 		{
-			N[str] = i;
-			return H[str] = trg;
-		}
-		else if (c == 1 && tau < opt || c == 2 && tau > opt)
-		{
-			opt = tau;
+			v = tau;
 			cnext = i;
 		}
+		
+		if (c == 1 && v < bb) bb = v;
+		if (c == 2 && v > aa) aa = v;
+		
+		if (bb <= aa) break; // тук е отсичането
 	}
-	
+
 	N[str] = cnext;
-	return H[str] = opt;
+	return H[str] = v;
 }
+
+var DISABLED_O;
 
 function init()
 {
@@ -61,13 +67,15 @@ function init()
 	turn = 1;
 	
 	document.getElementById('B1').disabled = false;
+	DISABLED_O = false;
 }
 
 function start_o()
 {
 	document.getElementById('B1').disabled = true;
+	DISABLED_O = true;
 	
-	eval(state, 1);
+	ab_cut(state, 1, -1, 1);
 	
 	if (state in N)
 	{
@@ -83,13 +91,19 @@ function cl(btn)
 {
 	if (btn.value != '') return;
 	
+	if (!DISABLED_O)
+	{
+		document.getElementById('B1').disabled = true;
+		DISABLED_O = true;
+	}
+	
 	btn.value = turn == 1 ? 'x':'o';
 	
 	n = parseInt(btn.id.substr(3, btn.id.length - 1));
 	
 	state = state.substr(0, n) + turn + state.substr(n + 1, 8 - n);
 	
-	eval(state, 3 - turn);
+	ab_cut(state, 3 - turn, -1, 1);
 	
 	if (state in N)
 	{
@@ -105,7 +119,7 @@ function cl(btn)
 		if (h == 1) alert('O wins!');
 		if (h == 0) alert('Draw!');
 		if (h != 2) init();
-	}, 200);
+	}, 300);
 }
 </script>
 <style type="text/css">
