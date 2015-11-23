@@ -1,0 +1,57 @@
+<script src="iris.js"></script>
+<script>
+var M = 4;
+
+function swap(a,i,j)
+{
+	var t = a[i];
+	a[i] = a[j];
+	a[j] = t;
+}
+
+function dist(a, b)
+{
+	var s = 0;
+	for (var i = 0; i < M; i++) s += (a[i] - b[i])*(a[i] - b[i]);
+	return Math.sqrt(s);
+}
+
+function kNN(a, k)
+{
+	var P = {};
+	
+	var m, pv_dist, s;
+	
+	k--;
+	
+	for (var l = 0, r = DATA.length - 1; l < r;)
+	{
+		m = Math.floor((l + r)/2);
+		
+		pv_dist = dist(DATA[m], a);
+		
+		swap(DATA, m, r);
+	
+		s = l;
+		for (var i = l; i < r; i++) if (dist(DATA[i], a) < pv_dist) swap(DATA, i, s++);
+	
+		swap(DATA, s, r);
+		
+		if (s == k) break;
+		else if (k < s) r = s - 1;
+		else l = s + 1;
+	}
+
+	k++;
+	
+	for (var i = 0; i < k; i++)
+	{
+		tau = DATA[i][4];
+		if (tau in P) P[tau]++; else P[tau] = 1;
+	}	
+	
+	for (tau in P) P[tau] /= k;
+	
+	return P;
+}
+</script>

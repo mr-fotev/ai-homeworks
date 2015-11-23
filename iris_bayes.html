@@ -1,0 +1,80 @@
+<script src="iris.js"></script>
+<script>
+var Stat;
+
+var Prob;
+
+var M = 4;
+
+function normal_dens(x, mu, s2)
+{
+	return 1/Math.sqrt(2*Math.PI*s2)*Math.exp(-(x - mu)*(x - mu)/(2*s2));
+}
+
+function gen_stat()
+{
+	H = {};
+	
+	Stat = {};
+	
+	Prob = {};
+	
+	for (var i = 0; i < DATA.length; i++)
+	{
+		tau = DATA[i][4];
+		
+		if (tau in H)
+		{
+			H[tau][0]++;
+			for (var j = 0; j < M; j++)
+			{
+				H[tau][2*j + 1] += DATA[i][j];
+				H[tau][2*j + 2] += DATA[i][j]*DATA[i][j];
+			}
+		}
+		else
+		{
+			H[tau] = new Array(2*M + 1);
+			H[tau][0] = 1;
+			for (var j = 0; j < M; j++)
+			{
+				H[tau][2*j + 1] = DATA[i][j];
+				H[tau][2*j + 2] = DATA[i][j]*DATA[i][j];
+			}
+		}
+	}
+	
+	for (tau in H)
+	{
+		Stat[tau] = new Array(2*M + 1);
+		Stat[tau][0] = H[tau][0];
+		
+		for (var j = 0; j < M; j++)
+		{
+			Stat[tau][2*j + 1] = parseFloat((H[tau][2*j + 1]/H[tau][0]).toFixed(10));
+			Stat[tau][2*j + 2] = parseFloat((H[tau][2*j + 2]/H[tau][0] - Stat[tau][2*j + 1] * Stat[tau][2*j + 1]).toFixed(10));
+		}
+	}
+	
+	Prob = 1/Object.keys(H).length;
+}
+
+function prob(a)
+{
+	P = {};
+	
+	evidence = 0;
+	for (tau in Stat)
+	{	
+		var s = Prob;
+		for (var j = 0; j < M; j++) s *= normal_dens(a[j], Stat[tau][2*j + 1], Stat[tau][2*j + 2]);
+		P[tau] = s;
+		
+		evidence += s;
+	}
+	
+	for (tau in Stat) P[tau] /= evidence;
+	
+	return P;
+}
+</script>
