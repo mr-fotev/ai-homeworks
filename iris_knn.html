@@ -12,8 +12,8 @@ function swap(a,i,j)
 function dist(a, b)
 {
 	var s = 0;
-	for (var i = 0; i < M; i++) s += (a[i] - b[i])*(a[i] - b[i]);
-	return Math.sqrt(s);
+	for (var i = 0; i < M; i++) s += Math.abs(a[i] - b[i]) / Math.max(a[i], b[i]);
+	return s;
 }
 
 function kNN(a, k)
