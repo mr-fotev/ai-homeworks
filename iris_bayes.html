@@ -8,7 +8,8 @@ var M = 4;
 
 function normal_dens(x, mu, s2)
 {
-	return 1/Math.sqrt(2*Math.PI*s2)*Math.exp(-(x - mu)*(x - mu)/(2*s2));
+	x = (x - mu) / Math.sqrt(s2);
+	return 1/Math.sqrt(2*Math.PI)*Math.exp(-x*x/2);
 }
 
 function gen_stat()
