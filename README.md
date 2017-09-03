@@ -1,4 +1,4 @@
-##ai-homeworks
+## ai-homeworks
 
 ###1) 8pzl_solver
    Това е конзолен 8-puzzle Solver. Включва пет реализации - IDDFS с хеширане на дълбочината, "чист" BFS, А\*, IDA\* и Beam Search с Манхатанско разстояние. Стартира се с *dsolve(x)* за IDDFS, *bsolve(x)* за BFS, *asolve(x)* за A\*, *idasolve(x)* за IDA\* и *bmsolve(x)* за Beam Search, където *x* е началната позиция.
